@@ -1,0 +1,31 @@
+import fetchUserData from '../src/api.js';
+
+describe('fetchUserData', () => {
+  it('должен вернуть пользователя с id = 1', async () => {
+    await expect(fetchUserData(1)).resolves.toEqual({ id: 1, name: 'John Doe' });
+  });
+
+  it('должен вернуть пользователя с именем John Doe для id = 1', async () => {
+    const user = await fetchUserData(1);
+    expect(user).toMatchObject({ id: 1, name: 'John Doe' });
+    expect(user.name).toBe('John Doe');
+  });
+
+  it('должен отклонить промис для невалидного userId = 0', async () => {
+    await expect(fetchUserData(0)).rejects.toThrow('Invalid user ID');
+  });
+
+  it('должен отклонить промис с ошибкой для userId = 0', () => {
+    return expect(fetchUserData(0)).rejects.toThrow('Invalid user ID');
+  });
+
+  it('разные userId возвращают пользователей с разными id', async () => {
+    const user1Promise = fetchUserData(1);
+    const user2Promise = fetchUserData(2);
+    
+    const [user1, user2] = await Promise.all([user1Promise, user2Promise]);
+    
+    expect(user1.id).toBe(1);
+    expect(user2.id).toBe(2);
+  });
+});
